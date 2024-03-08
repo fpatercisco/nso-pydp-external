@@ -44,7 +44,7 @@ module pydp-external {
 	}
       }
 
-      containter words {
+      container words {
 	config false;
 	tailf:callpoint "words";
 	leaf random {

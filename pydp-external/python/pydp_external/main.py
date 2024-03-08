@@ -29,6 +29,16 @@ class NumbersCallbackHandler(object):
         }
 
         #return { "trivia": random_number_trivia }
+
+
+class WordsCallbackHandler(object):
+    def __init__(self, log):
+        self.log = log
+
+    def get_object(self, tctx, keypath, _args):
+        self.log.info(f"WordsCallbackHandler.get_object called. keypath={keypath}, _args={_args}")
+        random_word = requests.get('https://random-word-api.herokuapp.com/word').text[2:-2]
+        return { "words" : { "random": random_word } }
         
 
 # ---------------------------------------------
@@ -40,24 +50,30 @@ class Main(ncs.application.Application):
         # through 'self.log' and is a ncs.log.Log instance.
         self.log.info('Main RUNNING')
 
-        # instantiate numbers handler
+        # instantiate handlers
         numbers_handler = NumbersCallbackHandler(self.log)
+        words_handler = WordsCallbackHandler(self.log)
 
-        # instantiate DataCallbacks helper class
-        numbers_dcb=DataCallbacks(self.log)
+        # instantiate DataCallbacks helper classes
+        numbers_dcb = DataCallbacks(self.log)
+        words_dcb = DataCallbacks(self.log)
 
-        # register the handler w/ the DataCallbacks instance
+        # register the handlers w/ the DataCallbacks instances
 #        numbers_dcb.register('/pydp-external:external-data/pydp-external:instance/pydp-external:numbers',
         numbers_dcb.register('/pydp-external:external-data/pydp-external:instance',
                              numbers_handler)
+        words_dcb.register('/pydp-external:external-data/pydp-external:instance',
+                           words_handler)
 
         # create a daemon to manage the connection between our data provder & NCS
         pydp_external_daemon = Daemon('pydp-external-daemon', log=self)
 
-        # register the numbers DataCallbacks helper instance as a data callback
-        # using the daemon's context & the 'numbers' callpoint from our YANG
+        # register the numbers DataCallbacks helper instances as data callbacks
+        # using the daemon's context & the appropriate callpoints from our YANG
         _ncs.dp.register_data_cb(pydp_external_daemon.ctx(), 'numbers',
                                  numbers_dcb)
+        _ncs.dp.register_data_cb(pydp_external_daemon.ctx(), 'words',
+                                 words_dcb)
 
         # start the daemon
         pydp_external_daemon.start()
