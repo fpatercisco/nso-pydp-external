@@ -1,0 +1,56 @@
+module pydp-external {
+
+  yang-version 1.1;
+
+  namespace "http://example.com/pydp-external";
+  prefix pydp-external;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import tailf-ncs {
+    prefix ncs;
+  }
+
+  description
+    "NSO python data provider examples";
+
+  revision 2016-01-01 {
+    description
+      "Initial revision.";
+  }
+
+  container external-data {
+    tailf:info "Data outside of NSO";
+    list instance {
+      tailf:info "An instance of external-data";
+
+      key name;
+      leaf name {
+	type string;
+      }
+
+      container numbers {
+	config false;
+	tailf:callpoint "numbers";
+	leaf trivia {
+	  type string;
+	}
+	leaf math {
+	  type string;
+	}
+      }
+
+      containter words {
+	config false;
+	tailf:callpoint "words";
+	leaf random {
+	  type string;
+	}
+      }
+    }
+  }
+}
