@@ -30,24 +30,30 @@ module pydp-external {
 
       key name;
       leaf name {
+	tailf:info "Instance name";
 	type string;
       }
 
       container numbers {
+	tailf:info "External number data from http://numbersapi.com";
 	config false;
 	tailf:callpoint "numbers";
 	leaf trivia {
+	  tailf:info "Random number trivia from http://numbersapi.com";
 	  type string;
 	}
 	leaf math {
+	  tailf:info "Random math facts from http://numbersapi.com";
 	  type string;
 	}
       }
 
       container words {
+	tailf:info "External word data from https://random-word-api.herokuapp.com";
 	config false;
 	tailf:callpoint "words";
 	leaf random {
+	  tailf:info "One random word from https://random-word-api.herokuapp.com";
 	  type string;
 	}
       }
